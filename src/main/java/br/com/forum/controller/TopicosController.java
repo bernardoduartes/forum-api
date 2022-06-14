@@ -2,6 +2,7 @@ package br.com.forum.controller;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import br.com.forum.controller.dto.DetalhesDoTopicoDto;
 import br.com.forum.controller.dto.TopicoDto;
 import br.com.forum.controller.form.TopicoForm;
 import br.com.forum.modelo.Topico;
@@ -32,14 +34,25 @@ public class TopicosController {
 	@Autowired
 	private CursoRepository cursoRepository;
 	
-	@GetMapping
-	public List<TopicoDto> lista() {
-		return TopicoDto.converter(topicoRepository.findAll());
+	@GetMapping("{id}")
+	public ResponseEntity<DetalhesDoTopicoDto> detalhar(@PathVariable Long id){
+		Optional<Topico> topico = topicoRepository.findById(id);
+		if (topico.isPresent()) {
+			return ResponseEntity.ok(new DetalhesDoTopicoDto(topico.get()));
+		}
+		
+		return ResponseEntity.notFound().build();
 	}
 	
-	@GetMapping("{nomeCurso}")
-	public List<TopicoDto> bucarPorNome(@PathVariable final String nomeCurso) {
-		return TopicoDto.converter(topicoRepository.findByCursoNome(nomeCurso));
+	@GetMapping
+	public List<TopicoDto> lista(String nomeCurso) {
+		if (nomeCurso == null) {
+			List<Topico> topicos = topicoRepository.findAll();
+			return TopicoDto.converter(topicos);
+		} else {
+			List<Topico> topicos = topicoRepository.findByCursoNome(nomeCurso);
+			return TopicoDto.converter(topicos);
+		}
 	}
 	
 	@PostMapping
@@ -56,4 +69,6 @@ public class TopicosController {
 				.created(uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri())
 				.body(new TopicoDto(topico));
 	}
+	
+
 }
