@@ -3,6 +3,8 @@ package br.com.forum.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +20,7 @@ import br.com.forum.controller.form.TopicoForm;
 import br.com.forum.modelo.Topico;
 import br.com.forum.repository.CursoRepository;
 import br.com.forum.repository.TopicoRepository;
+
 
 @RestController
 @RequestMapping("topicos")
@@ -41,7 +44,7 @@ public class TopicosController {
 	
 	@PostMapping
 	public ResponseEntity<TopicoDto> criar(
-		@RequestBody TopicoForm form, 
+		@RequestBody @Valid TopicoForm form, 
 		UriComponentsBuilder uriBuilder
 	){
 		
