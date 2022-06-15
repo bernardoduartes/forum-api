@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -26,6 +27,11 @@ import br.com.forum.controller.form.TopicoForm;
 import br.com.forum.modelo.Topico;
 import br.com.forum.repository.CursoRepository;
 import br.com.forum.repository.TopicoRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 
 
 @RestController
@@ -49,12 +55,20 @@ public class TopicosController {
 	}
 	
 	@GetMapping
-	public List<TopicoDto> lista(String nomeCurso) {
+	public Page<TopicoDto> lista(
+		@RequestParam(required = false) String nomeCurso, 
+		@RequestParam int page,
+		@RequestParam int size, 
+		@RequestParam String sort
+	) {
+		
+		Pageable pageable = PageRequest.of(page, size, Direction.DESC, sort);
+		
 		if (nomeCurso == null) {
-			List<Topico> topicos = topicoRepository.findAll();
+			Page<Topico> topicos = topicoRepository.findAll(pageable);
 			return TopicoDto.converter(topicos);
 		} else {
-			List<Topico> topicos = topicoRepository.findByCursoNome(nomeCurso);
+			Page<Topico> topicos = topicoRepository.findByCursoNome(nomeCurso, pageable);
 			return TopicoDto.converter(topicos);
 		}
 	}
