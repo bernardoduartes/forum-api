@@ -10,7 +10,7 @@ public class HelloController {
 	@RequestMapping("/")
 	@ResponseBody
 	public String hello() {
-		return "Hello World!";
+		return "04. Gerando token com JWT";
 	}
 
 }
