@@ -1,13 +1,16 @@
 package br.com.forum.controller;
 
 
-import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,11 +30,6 @@ import br.com.forum.controller.form.TopicoForm;
 import br.com.forum.modelo.Topico;
 import br.com.forum.repository.CursoRepository;
 import br.com.forum.repository.TopicoRepository;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 
 
 @RestController
@@ -57,12 +55,8 @@ public class TopicosController {
 	@GetMapping
 	public Page<TopicoDto> lista(
 		@RequestParam(required = false) String nomeCurso, 
-		@RequestParam int page,
-		@RequestParam int size, 
-		@RequestParam String sort
+		@PageableDefault(sort = "dataCriacao", direction = Direction.DESC, page = 0, size = 10) Pageable pageable
 	) {
-		
-		Pageable pageable = PageRequest.of(page, size, Direction.DESC, sort);
 		
 		if (nomeCurso == null) {
 			Page<Topico> topicos = topicoRepository.findAll(pageable);
