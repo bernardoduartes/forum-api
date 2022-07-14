@@ -18,9 +18,9 @@ import br.com.forum.config.security.TokenService;
 import br.com.forum.controller.dto.TokenDto;
 import br.com.forum.controller.form.LoginForm;
 
-@Profile("prod")
 @RestController
 @RequestMapping("auth")
+@Profile({"prod", "test"})
 public class AutenticacaoController {
 	
 	@Autowired
